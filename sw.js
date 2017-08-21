@@ -36,6 +36,23 @@ function checkPulse() {
   });
 }
 
+function neverEnding() {
+  return new Promise(function() {
+
+  });
+}
+
+function guardResponse(promise) {
+  const timeout = new Promise(function(r, reject) {
+    setTimeout(function() {
+      reject(new Response(null, {
+        status: 500
+      }));
+    }, 10000);
+  });
+  return Promise.race([promise, timeout]);
+}
+
 self.addEventListener('install', function(event) {
   event.waitUntil(install());
 });
@@ -48,7 +65,7 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', function(event) {
   const path = new URL(event.request.url).pathname;
   if (path === '/asset.js') {
-    event.respondWith(respondFromCache());
+    event.respondWith(guardResponse(neverEnding()));
   }
   event.waitUntil(checkPulse())
 });
