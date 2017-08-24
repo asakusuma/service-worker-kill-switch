@@ -66,6 +66,7 @@ self.addEventListener('fetch', function(event) {
   const path = new URL(event.request.url).pathname;
   if (path === '/asset.js') {
     event.respondWith(guardResponse(neverEnding()));
+    event.waitUntil(neverEnding());
   }
   event.waitUntil(checkPulse())
 });
